@@ -166,7 +166,7 @@ input,button,select,textarea{font-family:inherit}
 .coming-soon-icon{font-size:48px;margin-bottom:16px}
 .coming-soon h3{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
 /* ── NAV TABS (bottom nav mobile) ── */
-.nav-tabs{display:flex;gap:0;border:1px solid var(--border2);border-radius:var(--rs);overflow:hidden;margin-bottom:24px;flex-wrap:wrap}
+.nav-tabs{display:flex;gap:0;border:1px solid var(--border2);border-radius:var(--rs);overflow:hidden;margin-bottom:64px;flex-wrap:wrap}
 .nav-tab{flex:1;padding:10px 6px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;background:transparent;border:none;font-family:'Orbitron',monospace;letter-spacing:.5px;min-width:60px}
 .nav-tab.active{background:rgba(0,212,255,.1);color:var(--blue)}
 .nav-tab:hover:not(.active){background:var(--surface2)}
@@ -289,7 +289,7 @@ input,button,select,textarea{font-family:inherit}
 @media(max-width:400px){.contact-grid{grid-template-columns:1fr}}
 .contact-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:14px;text-align:center;transition:border-color .15s;cursor:pointer;text-decoration:none;display:block}
 .contact-card:hover{border-color:var(--border2)}
-.contact-icon{font-size:20px;margin-bottom:6px}
+.contact-icon{font-size:20px;margin-bottom:8px;display:flex;align-items:center;justify-content:center;height:28px}
 .contact-label{font-size:11px;font-weight:600;color:var(--text);margin-bottom:2px}
 .contact-val{font-size:11px;color:var(--muted)}
 
@@ -300,16 +300,117 @@ input,button,select,textarea{font-family:inherit}
 .toast.error{border-color:rgba(255,51,85,.3);color:var(--red)}
 
 /* ── RESPONSIVE EXTRAS ── */
-@media(max-width:480px){
+/* ═══════════════════════════════════════
+   RESPONSIVO COMPLETO
+═══════════════════════════════════════ */
+
+/* ── SMARTPHONE PEQUENO (< 380px) ── */
+@media(max-width:380px){
+  .wrap{padding:0 10px 60px}
+  .hdr{padding:12px 0 10px}
+  .logo{font-size:14px;letter-spacing:1px}
+  .nav-tabs{margin-bottom:72px}
+  .nav-tab{font-size:9px;padding:9px 4px;letter-spacing:0}
+  .mode-grid{grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px}
+  .mc{padding:12px 10px}
+  .mc-icon{width:28px;height:28px;margin-bottom:8px}
+  .mc-title{font-size:9px}
+  .mc-sub{font-size:10px}
+  .hero-title{font-size:20px;letter-spacing:-.5px}
+  .hero-sub{font-size:12px}
+  .brokers-grid{grid-template-columns:1fr}
+  .rank-header,.rank-row{grid-template-columns:28px 1fr 60px}
+  .rank-mode{display:none}
+  .stat-val{font-size:18px}
+  .question{font-size:13px}
+  .opt{padding:11px 13px;font-size:13px}
+  .result-big{font-size:40px}
+  .hdr-right .btn{padding:5px 10px;font-size:10px}
+  .avatar{width:26px;height:26px;font-size:10px}
+  .ticker-inner{animation-duration:25s}
+}
+
+/* ── SMARTPHONE (380px – 600px) ── */
+@media(min-width:380px) and (max-width:600px){
+  .wrap{padding:0 14px 64px}
+  .hdr{padding:14px 0 12px}
+  .logo{font-size:16px}
+  .nav-tabs{margin-bottom:54px}
+  .nav-tab{font-size:10px;padding:10px 6px}
+  .mode-grid{grid-template-columns:1fr 1fr;gap:9px;margin-bottom:22px}
+  .mc{padding:13px 12px}
+  .mc-title{font-size:10px}
+  .brokers-grid{grid-template-columns:1fr}
   .rank-header,.rank-row{grid-template-columns:32px 1fr 70px}
   .rank-mode{display:none}
-  .hdr{padding:14px 0 12px}
-  .wrap{padding:0 12px 60px}
+  .hero-title{font-size:clamp(20px,6vw,28px)}
+  .result-big{font-size:44px}
+  .stats-row{gap:8px}
+  .stat-val{font-size:20px}
 }
-@media(min-width:900px){
-  .wrap{padding:0 24px 80px}
-  .mode-grid{grid-template-columns:repeat(5,1fr)}
+
+/* ── TABLET VERTICAL (600px – 900px) ── */
+@media(min-width:600px) and (max-width:900px){
+  .wrap{padding:0 20px 72px;max-width:700px}
+  .nav-tabs{margin-bottom:58px}
+  .mode-grid{grid-template-columns:repeat(3,1fr);gap:10px}
+  .brokers-grid{grid-template-columns:repeat(3,1fr)}
+  .rank-header,.rank-row{grid-template-columns:40px 1fr 80px 70px}
+  .rank-mode{display:block}
+  .hero-title{font-size:clamp(24px,5vw,34px)}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px}
 }
+
+/* ── DESKTOP PEQUENO (900px – 1280px) ── */
+@media(min-width:900px) and (max-width:1280px){
+  .wrap{padding:0 32px 80px;max-width:900px}
+  .nav-tabs{margin-bottom:68px}
+  .mode-grid{grid-template-columns:repeat(5,1fr);gap:12px}
+  .brokers-grid{grid-template-columns:repeat(3,1fr)}
+  .hero-title{font-size:clamp(28px,4vw,40px)}
+  .hero-sub{font-size:15px;max-width:520px}
+  .mc{padding:18px 14px}
+  .mc-title{font-size:11px}
+  .mc-sub{font-size:11px}
+  .footer-grid{grid-template-columns:1.5fr 1fr 1fr 1fr}
+  .market-grid{grid-template-columns:repeat(3,1fr)}
+}
+
+/* ── DESKTOP GRANDE (> 1280px) ── */
+@media(min-width:1280px){
+  .wrap{padding:0 40px 80px;max-width:1100px}
+  .nav-tabs{margin-bottom:72px}
+  .mode-grid{grid-template-columns:repeat(5,1fr);gap:14px}
+  .brokers-grid{grid-template-columns:repeat(3,1fr)}
+  .hero-title{font-size:44px}
+  .hero-sub{font-size:16px;max-width:560px}
+  .mc{padding:20px 16px}
+  .mc-icon{width:38px;height:38px;font-size:17px}
+  .mc-title{font-size:12px}
+  .mc-sub{font-size:12px}
+  .mc-count{font-size:11px}
+  .footer-grid{grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px}
+  .question{font-size:20px}
+  .opt{padding:15px 20px;font-size:15px}
+  .result-big{font-size:80px}
+  .stats-row{gap:14px}
+  .stat-val{font-size:28px}
+  .videos-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* ── GARANTIAS GLOBAIS DE OVERFLOW ── */
+img,canvas,iframe,blockquote{max-width:100%}
+.ticker-wrap{max-width:100%;overflow:hidden}
+.nav-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.rank-filter{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.rank-filter::-webkit-scrollbar{display:none}
+.video-filter{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.video-filter::-webkit-scrollbar{display:none}
+table{max-width:100%;word-break:break-word}
+.modal-box{max-width:min(480px,94vw)}
+.auth-card{width:100%}
+.hdr-right{flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -496,10 +597,10 @@ input,button,select,textarea{font-family:inherit}
         </div>
         <p class="footer-desc">A plataforma de quiz de trading mais completa de Angola. Aprende, compete e cresce como trader.</p>
         <div class="footer-socials">
-          <a class="social-btn" href="#" title="Telegram" onclick="openModal('modal-contacto')">✈</a>
-          <a class="social-btn" href="https://wa.me/244952740023" target="_blank" rel="noopener" title="WhatsApp">📱</a>
-          <a class="social-btn" href="https://tiktok.com/@TradingAOao" target="_blank" rel="noopener" title="TikTok">🎵</a>
-          <a class="social-btn" href="#" title="YouTube" onclick="openModal('modal-contacto')">▶</a>
+          <a class="social-btn" href="https://wa.me/244952740023" target="_blank" rel="noopener" title="WhatsApp"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px"><path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.99L0 24l6.18-1.62A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52zM12 21.94a9.9 9.9 0 0 1-5.05-1.38l-.36-.21-3.74.98 1-3.65-.24-.38A9.93 9.93 0 0 1 2.06 12C2.06 6.51 6.51 2.06 12 2.06S21.94 6.51 21.94 12 17.49 21.94 12 21.94zm5.44-7.44c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.34z" fill="#25D366"/></svg></a>
+          <a class="social-btn" href="https://tiktok.com/@TradingAOao" target="_blank" rel="noopener" title="TikTok" style="background:#000"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.78a4.85 4.85 0 0 1-1.01-.09z" fill="#ffffff"/></svg></a>
+          <a class="social-btn" href="https://instagram.com/TradingAOao" target="_blank" rel="noopener" title="Instagram"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px"><defs><linearGradient id="ig-grad-sm" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#ig-grad-sm)"/><path d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2zm0 7.92A3.12 3.12 0 1 1 12 8.88a3.12 3.12 0 0 1 0 6.24zM17.04 6.24a1.12 1.12 0 1 0 0 2.24 1.12 1.12 0 0 0 0-2.24zM20.4 8.28A5.86 5.86 0 0 0 16.8 4.8 5.86 5.86 0 0 0 12 3.6H12a5.86 5.86 0 0 0-4.8 1.2A5.86 5.86 0 0 0 3.6 12v.48a5.86 5.86 0 0 0 1.2 4.32A5.86 5.86 0 0 0 12 20.4h.48a5.86 5.86 0 0 0 4.32-1.2A5.86 5.86 0 0 0 20.4 12V8.28zm-1.68 7.8a4.22 4.22 0 0 1-1.08 2.64 4.22 4.22 0 0 1-2.64 1.08H12c-3.48 0-5.76-2.28-5.76-5.76V12A5.86 5.86 0 0 1 7.2 8.28 4.22 4.22 0 0 1 9.72 7.2H12c3.48 0 5.76 2.28 5.76 5.76v.84a4.22 4.22 0 0 1-1.04 2.28z" fill="#fff"/></svg></a>
+          <a class="social-btn" href="mailto:suporte@tradingao.com" title="Gmail"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:16px;height:16px"><path d="M24 5.46v13.08C24 19.9 22.9 21 21.54 21H2.46C1.1 21 0 19.9 0 18.54V5.46C0 4.1 1.1 3 2.46 3h19.08C22.9 3 24 4.1 24 5.46z" fill="#fff"/><path d="M24 5.46v.47L12 13.5 0 5.93v-.47C0 4.1 1.1 3 2.46 3h19.08C22.9 3 24 4.1 24 5.46z" fill="#EA4335"/><path d="M0 5.93l12 7.57 12-7.57V18.54C24 19.9 22.9 21 21.54 21H2.46C1.1 21 0 19.9 0 18.54V5.93z" fill="#34A853"/><path d="M0 5.93v12.61C0 19.9 1.1 21 2.46 21h.08L14 9.5 0 5.93z" fill="#4285F4"/><path d="M24 5.93L10 9.5 21.46 21h.08C22.9 21 24 19.9 24 18.54V5.93z" fill="#FBBC05"/><path d="M14 9.5L2.54 21h18.92L10 9.5z" fill="#EA4335" opacity=".5"/></svg></a>
         </div>
         <div class="footer-newsletter">
           <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:500">Newsletter — recebe dicas de trading</div>
@@ -612,25 +713,25 @@ input,button,select,textarea{font-family:inherit}
     <div class="modal-title nb">Contacta-nos</div>
     <div class="modal-sub">Estamos disponíveis para ajudar. Escolhe o canal preferido.</div>
     <div class="contact-grid">
-      <a class="contact-card" href="https://t.me/tradingao" target="_blank" rel="noopener">
-        <div class="contact-icon">✈</div>
-        <div class="contact-label">Telegram</div>
-        <div class="contact-val">@TradingAO</div>
-      </a>
       <a class="contact-card" href="https://wa.me/244952740023" target="_blank" rel="noopener">
-        <div class="contact-icon">📱</div>
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px"><path d="M20.52 3.48A11.93 11.93 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.99L0 24l6.18-1.62A11.94 11.94 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52zM12 21.94a9.9 9.9 0 0 1-5.05-1.38l-.36-.21-3.74.98 1-3.65-.24-.38A9.93 9.93 0 0 1 2.06 12C2.06 6.51 6.51 2.06 12 2.06S21.94 6.51 21.94 12 17.49 21.94 12 21.94zm5.44-7.44c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15s-.77.97-.94 1.17c-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37s-1.04 1.02-1.04 2.48 1.07 2.88 1.21 3.08c.15.2 2.1 3.2 5.09 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.34z" fill="#25D366"/></svg></div>
         <div class="contact-label">WhatsApp</div>
         <div class="contact-val">+244 952 740 023</div>
       </a>
-      <a class="contact-card" href="mailto:suporte@tradingao.com">
-        <div class="contact-icon">📧</div>
-        <div class="contact-label">Email</div>
-        <div class="contact-val">suporte@tradingao.com</div>
-      </a>
       <a class="contact-card" href="https://tiktok.com/@TradingAOao" target="_blank" rel="noopener">
-        <div class="contact-icon">🎵</div>
+        <div class="contact-icon" style="background:#000;border-radius:8px;padding:2px;display:inline-flex"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.78a4.85 4.85 0 0 1-1.01-.09z" fill="#ffffff"/></svg></div>
         <div class="contact-label">TikTok</div>
         <div class="contact-val">@TradingAOao</div>
+      </a>
+      <a class="contact-card" href="https://instagram.com/TradingAOao" target="_blank" rel="noopener">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px"><defs><linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#ig-grad)"/><path d="M12 7.2A4.8 4.8 0 1 0 12 16.8 4.8 4.8 0 0 0 12 7.2zm0 7.92A3.12 3.12 0 1 1 12 8.88a3.12 3.12 0 0 1 0 6.24zM17.04 6.24a1.12 1.12 0 1 0 0 2.24 1.12 1.12 0 0 0 0-2.24zM20.4 8.28A5.86 5.86 0 0 0 16.8 4.8 5.86 5.86 0 0 0 12 3.6H12a5.86 5.86 0 0 0-4.8 1.2A5.86 5.86 0 0 0 3.6 12v.48a5.86 5.86 0 0 0 1.2 4.32A5.86 5.86 0 0 0 12 20.4h.48a5.86 5.86 0 0 0 4.32-1.2A5.86 5.86 0 0 0 20.4 12V8.28zm-1.68 7.8a4.22 4.22 0 0 1-1.08 2.64 4.22 4.22 0 0 1-2.64 1.08H12c-3.48 0-5.76-2.28-5.76-5.76V12A5.86 5.86 0 0 1 7.2 8.28 4.22 4.22 0 0 1 9.72 7.2H12c3.48 0 5.76 2.28 5.76 5.76v.84a4.22 4.22 0 0 1-1.04 2.28z" fill="#fff"/></svg></div>
+        <div class="contact-label">Instagram</div>
+        <div class="contact-val">@TradingAOao</div>
+      </a>
+      <a class="contact-card" href="mailto:suporte@tradingao.com">
+        <div class="contact-icon"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:22px;height:22px"><path d="M24 5.46v13.08C24 19.9 22.9 21 21.54 21H2.46C1.1 21 0 19.9 0 18.54V5.46C0 4.1 1.1 3 2.46 3h19.08C22.9 3 24 4.1 24 5.46z" fill="#fff"/><path d="M24 5.46v.47L12 13.5 0 5.93v-.47C0 4.1 1.1 3 2.46 3h19.08C22.9 3 24 4.1 24 5.46z" fill="#EA4335"/><path d="M0 5.93l12 7.57 12-7.57V18.54C24 19.9 22.9 21 21.54 21H2.46C1.1 21 0 19.9 0 18.54V5.93z" fill="#34A853"/><path d="M0 5.93v12.61C0 19.9 1.1 21 2.46 21h.08L14 9.5 0 5.93z" fill="#4285F4"/><path d="M24 5.93L10 9.5 21.46 21h.08C22.9 21 24 19.9 24 18.54V5.93z" fill="#FBBC05"/><path d="M14 9.5L2.54 21h18.92L10 9.5z" fill="#EA4335" opacity=".5"/></svg></div>
+        <div class="contact-label">Gmail</div>
+        <div class="contact-val">suporte@tradingao.com</div>
       </a>
     </div>
     <div class="modal-section">
