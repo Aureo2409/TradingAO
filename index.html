@@ -141,6 +141,30 @@ input,button,select,textarea{font-family:inherit}
 .bk-cta.dr{background:rgba(255,51,85,.1);color:var(--deriv);border:1px solid rgba(255,51,85,.2)}
 .bk-cta.bn{background:rgba(255,170,0,.1);color:var(--binance);border:1px solid rgba(255,170,0,.2)}
 
+/* ── VÍDEOS ── */
+.videos-hero{text-align:center;padding:20px 0 28px}
+.videos-hero h2{font-family:'Orbitron',monospace;font-size:clamp(16px,4vw,26px);font-weight:900;margin-bottom:8px}
+.videos-hero p{font-size:13px;color:var(--muted);max-width:460px;margin:0 auto}
+.video-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.vf-btn{padding:7px 16px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--muted);transition:all .15s;font-family:'Orbitron',monospace;letter-spacing:.5px}
+.vf-btn.active{background:rgba(0,212,255,.1);color:var(--blue);border-color:rgba(0,212,255,.3)}
+.vf-btn:hover:not(.active){background:var(--surface2);color:var(--text)}
+.videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+@media(max-width:500px){.videos-grid{grid-template-columns:1fr}}
+.video-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s,transform .2s}
+.video-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.video-card-header{padding:14px 16px 10px;display:flex;align-items:center;gap:10px}
+.video-platform{font-size:18px}
+.video-meta{flex:1;min-width:0}
+.video-category{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-family:'Orbitron',monospace;margin-bottom:3px}
+.video-title{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.video-embed{padding:0 12px 12px;position:relative}
+.video-embed blockquote{margin:0!important;border-radius:10px;overflow:hidden}
+.video-cta{margin:10px 16px 14px;display:flex;gap:8px}
+.video-cta a{flex:1;text-align:center;padding:9px 10px;border-radius:var(--rs);font-size:11px;font-weight:700;text-decoration:none;font-family:'Orbitron',monospace;letter-spacing:.5px;transition:all .15s}
+.coming-soon{text-align:center;padding:60px 20px;color:var(--muted)}
+.coming-soon-icon{font-size:48px;margin-bottom:16px}
+.coming-soon h3{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text)}
 /* ── NAV TABS (bottom nav mobile) ── */
 .nav-tabs{display:flex;gap:0;border:1px solid var(--border2);border-radius:var(--rs);overflow:hidden;margin-bottom:24px;flex-wrap:wrap}
 .nav-tab{flex:1;padding:10px 6px;text-align:center;font-size:11px;font-weight:600;cursor:pointer;color:var(--muted);transition:all .15s;background:transparent;border:none;font-family:'Orbitron',monospace;letter-spacing:.5px;min-width:60px}
@@ -368,6 +392,7 @@ input,button,select,textarea{font-family:inherit}
     <!-- NAV -->
     <div class="nav-tabs">
       <button class="nav-tab active" onclick="showTab('tab-quiz')">QUIZ</button>
+      <button class="nav-tab" onclick="showTab('tab-videos')">VÍDEOS</button>
       <button class="nav-tab" onclick="showTab('tab-ranking')">RANKING</button>
     </div>
 
@@ -383,6 +408,29 @@ input,button,select,textarea{font-family:inherit}
       <div class="sl">Abre conta nas corretoras</div>
       <div class="brokers-grid" id="brokers-home"></div>
     </div>
+    <!-- TAB VÍDEOS -->
+    <div id="tab-videos" style="display:none">
+      <div class="videos-hero">
+        <h2><span class="nb">APRENDE</span> A NEGOCIAR<br><span class="ng">PASSO A PASSO</span></h2>
+        <p>Tutoriais em vídeo para te ajudar a registar e começar nas melhores plataformas de trading.</p>
+      </div>
+      <div class="video-filter" id="video-filter">
+        <button class="vf-btn active" onclick="filterVideos('todos',this)">TODOS</button>
+        <button class="vf-btn" onclick="filterVideos('binance',this)" style="color:var(--amber)">BINANCE</button>
+        <button class="vf-btn" onclick="filterVideos('quotex',this)" style="color:var(--green)">QUOTEX</button>
+        <button class="vf-btn" onclick="filterVideos('deriv',this)" style="color:var(--red)">DERIV</button>
+        <button class="vf-btn" onclick="filterVideos('trading',this)">TRADING</button>
+      </div>
+      <div class="videos-grid" id="videos-grid"></div>
+      <!-- CTA adicionar mais vídeos -->
+      <div style="text-align:center;margin-top:32px;padding:24px;background:var(--surface);border:1px dashed var(--border2);border-radius:var(--r)">
+        <div style="font-size:28px;margin-bottom:10px">🎥</div>
+        <div style="font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px">MAIS VÍDEOS A CAMINHO</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Segue-nos no TikTok para não perderes nenhum tutorial novo.</div>
+        <a href="https://tiktok.com/@TradingAOao" target="_blank" rel="noopener" class="btn btn-primary" style="display:inline-flex">🎵 &nbsp;@TradingAOao no TikTok</a>
+      </div>
+    </div>
+
     <!-- TAB RANKING -->
     <div id="tab-ranking" style="display:none">
       <div class="sl" style="margin-top:8px">Ranking global</div>
@@ -449,8 +497,8 @@ input,button,select,textarea{font-family:inherit}
         <p class="footer-desc">A plataforma de quiz de trading mais completa de Angola. Aprende, compete e cresce como trader.</p>
         <div class="footer-socials">
           <a class="social-btn" href="#" title="Telegram" onclick="openModal('modal-contacto')">✈</a>
-          <a class="social-btn" href="#" title="WhatsApp" onclick="openModal('modal-contacto')">📱</a>
-          <a class="social-btn" href="#" title="Instagram" onclick="openModal('modal-contacto')">📷</a>
+          <a class="social-btn" href="https://wa.me/244952740023" target="_blank" rel="noopener" title="WhatsApp">📱</a>
+          <a class="social-btn" href="https://tiktok.com/@TradingAOao" target="_blank" rel="noopener" title="TikTok">🎵</a>
           <a class="social-btn" href="#" title="YouTube" onclick="openModal('modal-contacto')">▶</a>
         </div>
         <div class="footer-newsletter">
@@ -569,20 +617,20 @@ input,button,select,textarea{font-family:inherit}
         <div class="contact-label">Telegram</div>
         <div class="contact-val">@TradingAO</div>
       </a>
-      <a class="contact-card" href="https://wa.me/244900000000" target="_blank" rel="noopener">
+      <a class="contact-card" href="https://wa.me/244952740023" target="_blank" rel="noopener">
         <div class="contact-icon">📱</div>
         <div class="contact-label">WhatsApp</div>
-        <div class="contact-val">+244 900 000 000</div>
+        <div class="contact-val">+244 952 740 023</div>
       </a>
       <a class="contact-card" href="mailto:suporte@tradingao.com">
         <div class="contact-icon">📧</div>
         <div class="contact-label">Email</div>
         <div class="contact-val">suporte@tradingao.com</div>
       </a>
-      <a class="contact-card" href="https://instagram.com/tradingao" target="_blank" rel="noopener">
-        <div class="contact-icon">📷</div>
-        <div class="contact-label">Instagram</div>
-        <div class="contact-val">@tradingao</div>
+      <a class="contact-card" href="https://tiktok.com/@TradingAOao" target="_blank" rel="noopener">
+        <div class="contact-icon">🎵</div>
+        <div class="contact-label">TikTok</div>
+        <div class="contact-val">@TradingAOao</div>
       </a>
     </div>
     <div class="modal-section">
@@ -1344,13 +1392,14 @@ function renderRanking() {
    TABS
 ═══════════════════════════════════════════════ */
 function showTab(id) {
-  ['tab-quiz','tab-ranking'].forEach(t=>{
+  ['tab-quiz','tab-videos','tab-ranking'].forEach(t=>{
     document.getElementById(t).style.display = t===id?'block':'none';
   });
   document.querySelectorAll('.nav-tab').forEach((b,i)=>{
-    b.classList.toggle('active', ['tab-quiz','tab-ranking'][i]===id);
+    b.classList.toggle('active', ['tab-quiz','tab-videos','tab-ranking'][i]===id);
   });
   if(id==='tab-ranking'){buildRankFilter();renderRanking();}
+  if(id==='tab-videos'){renderVideos();}
 }
 
 /* ═══════════════════════════════════════════════
@@ -1818,6 +1867,117 @@ setInterval(()=>{
   simulatePrices(); // actualização suave a cada 10s
   fetchCryptoRealtime(); // tenta real; se funcionar, sobrescreve
 }, 10000);
+
+/* ═══════════════════════════════════════════════
+   VÍDEOS
+═══════════════════════════════════════════════ */
+const VIDEOS = [
+  {
+    id: '7628558088097811720',
+    category: 'binance',
+    title: 'Como criar conta na Binance (passo a passo)',
+    desc: 'Criação de conta na Binance de forma simples e rápida.',
+    platform: 'tiktok',
+    author: '@tsururu_tradring',
+    ctaLabel: 'Abrir conta Binance',
+    ctaUrl: 'https://www.binance.com/register?ref=1234866263',
+    ctaColor: 'rgba(255,170,0,.12)',
+    ctaTextColor: 'var(--amber)',
+    ctaBorder: 'rgba(255,170,0,.35)',
+  },
+  {
+    id: '7627762363709590802',
+    category: 'quotex',
+    title: 'Começa no Trading do Zero com a Quotex',
+    desc: 'Primeiros passos na Quotex — como criar conta e começar a operar.',
+    platform: 'tiktok',
+    author: '@tsururu_tradring',
+    ctaLabel: 'Abrir conta Quotex',
+    ctaUrl: 'https://broker-qx.pro/sign-up/?lid=2076062',
+    ctaColor: 'rgba(0,255,136,.12)',
+    ctaTextColor: 'var(--green)',
+    ctaBorder: 'rgba(0,255,136,.35)',
+  },
+];
+
+let currentVideoFilter = 'todos';
+let videosRendered = false;
+
+function filterVideos(cat, btn) {
+  currentVideoFilter = cat;
+  document.querySelectorAll('.vf-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderVideos();
+}
+
+function renderVideos() {
+  const grid = document.getElementById('videos-grid');
+  const filtered = currentVideoFilter === 'todos'
+    ? VIDEOS
+    : VIDEOS.filter(v => v.category === currentVideoFilter);
+
+  if(!filtered.length) {
+    grid.innerHTML = `<div class="coming-soon" style="grid-column:1/-1">
+      <div class="coming-soon-icon">🎬</div>
+      <h3>Em breve!</h3>
+      <p>Estamos a preparar vídeos para esta categoria. Segue-nos no TikTok!</p>
+    </div>`;
+    return;
+  }
+
+  const catColors = {
+    binance: {color:'var(--amber)',bg:'rgba(255,170,0,.1)',border:'rgba(255,170,0,.25)'},
+    quotex:  {color:'var(--green)',bg:'rgba(0,255,136,.1)',border:'rgba(0,255,136,.25)'},
+    deriv:   {color:'var(--red)',  bg:'rgba(255,51,85,.1)', border:'rgba(255,51,85,.25)'},
+    trading: {color:'var(--blue)', bg:'rgba(0,212,255,.1)', border:'rgba(0,212,255,.25)'},
+  };
+
+  grid.innerHTML = filtered.map(v => {
+    const cc = catColors[v.category] || catColors.trading;
+    return `<div class="video-card" data-cat="${v.category}">
+      <div class="video-card-header">
+        <div class="video-platform">🎵</div>
+        <div class="video-meta">
+          <div class="video-category" style="color:${cc.color}">${v.category.toUpperCase()}</div>
+          <div class="video-title">${v.title}</div>
+        </div>
+      </div>
+      <div class="video-embed">
+        <blockquote class="tiktok-embed"
+          cite="https://www.tiktok.com/${v.author}/video/${v.id}"
+          data-video-id="${v.id}"
+          style="max-width:100%;min-width:0;border-radius:10px">
+          <section>
+            <a target="_blank" title="${v.author}" href="https://www.tiktok.com/${v.author}?refer=embed">${v.author}</a>
+            ${v.desc}
+          </section>
+        </blockquote>
+      </div>
+      <div class="video-cta">
+        <a href="${v.ctaUrl}" target="_blank" rel="noopener"
+          style="background:${v.ctaColor};color:${v.ctaTextColor};border:1px solid ${v.ctaBorder}">
+          ${v.ctaLabel}
+        </a>
+        <a href="https://tiktok.com/${v.author}" target="_blank" rel="noopener"
+          style="background:rgba(255,255,255,.04);color:var(--muted);border:1px solid var(--border2);flex:0 0 auto;padding:9px 14px">
+          Ver no TikTok
+        </a>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Carrega o script embed do TikTok se ainda não estiver
+  if(!document.getElementById('tiktok-embed-js')) {
+    const s = document.createElement('script');
+    s.id = 'tiktok-embed-js';
+    s.src = 'https://www.tiktok.com/embed.js';
+    s.async = true;
+    document.body.appendChild(s);
+  } else if(window.tiktokEmbed) {
+    // Re-processa embeds já existentes
+    try { window.tiktokEmbed.lib.render(grid.querySelectorAll('.tiktok-embed')); } catch(e){}
+  }
+}
 
 /* ═══════════════════════════════════════════════
    MODAIS
