@@ -1206,11 +1206,7 @@ function updateTicker() {
     prevTickerPrices[t.sym] = pStr;
     return `<div class="ti">
       <span class="ti-l">${t.sym}</span>
-      <span class="ti-p ${flashClass}">${t.sym.includes('AOA')?'':'
-</body>
-</html>
-
-}${pStr}</span>
+      <span class="ti-p ${flashClass}">${pStr}</span>
       <span class="${up?'ti-u':'ti-d'}">${up?'▲':'▼'}${Math.abs(t.change).toFixed(2)}%</span>
     </div>`;
   }).join('');
@@ -1506,7 +1502,7 @@ const DB = {
   quotex:[
     {q:"O que é a Quotex?",opts:["Banco angolano","Plataforma de opções digitais online","Corretora de acções","App de câmbio"],ans:1,exp:"Quotex é plataforma de opções digitais, muito popular em Angola. Negocias pares, commodities, índices e cripto."},
     {q:"Qual o depósito mínimo na Quotex?",opts:["$100","$50","$10","$1"],ans:2,exp:"Depósito mínimo de $10. Um dos mais baixos do mercado, acessível para iniciantes angolanos."},
-    {q:"Qual o trade mínimo na Quotex?",opts:["$1","$5","$10","<script src="../js/app.js" defer></script>.50"],ans:0,exp:"Trades a partir de $1. Ideal para praticar gestão de risco com capital reduzido."},
+    {q:"Qual o trade mínimo na Quotex?",opts:["$1","$5","$10","$0.50"],ans:0,exp:"Trades a partir de $1. Ideal para praticar gestão de risco com capital reduzido."},
     {q:"Como criar conta na Quotex?",opts:["Ligar ao apoio","quotex.io > Registar > email e password","Agência física","Por correio"],ans:1,exp:"Registo 100% online em quotex.io. Email e password. Também podes usar conta Google."},
     {q:"O que é a conta demo na Quotex?",opts:["Conta premium","Conta com $10.000 virtuais para praticar sem risco","Conta bloqueada","Conta de bônus"],ans:1,exp:"Conta demo com $10.000 virtuais. Perfeita para aprender sem arriscar dinheiro real."},
     {q:"O que é payout na Quotex?",opts:["Taxa cobrada","Retorno se acertares na direcção","Custo do depósito","Saldo demo"],ans:1,exp:"Payout 70-98% por activo. $10 com payout 85% → recebes $18.50 se ganhares."},
@@ -1798,6 +1794,8 @@ function renderVideos() {
   const catColors = {
     binance: {color:'var(--amber)',bg:'rgba(255,170,0,.1)',border:'rgba(255,170,0,.25)'},
     quotex:  {color:'var(--green)',bg:'rgba(0,255,136,.1)',border:'rgba(0,255,136,.25)'},
+    deriv:   {color:'var(--red)',bg:'rgba(255,51,85,.1)',border:'rgba(255,51,85,.25)'},
+    trading: {color:'var(--blue)',bg:'rgba(0,212,255,.1)',border:'rgba(0,212,255,.25)'},
     deriv:   {color:'var(--red)',  bg:'rgba(255,51,85,.1)', border:'rgba(255,51,85,.25)'},
     trading: {color:'var(--blue)', bg:'rgba(0,212,255,.1)', border:'rgba(0,212,255,.25)'},
   };
