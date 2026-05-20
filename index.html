@@ -1503,32 +1503,6 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
         <p class="hero-sub">Acompanha os principais índices, divisas, commodities e criptomoedas globais em tempo real.</p>
       </div>
 
-      <!-- Widget TradingView - Mini Chart -->
-      <div style="margin-bottom: 28px;">
-        <div class="sl" style="margin-bottom: 14px;">📊 Gráfico ao Vivo — TradingView</div>
-        <div class="tradingview-widget-container" style="height: 400px; border: 1px solid var(--border2); border-radius: var(--r); overflow: hidden;">
-          <div class="tradingview-widget-container__widget" style="height:100%;"></div>
-          <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
-          {
-            "autosize": true,
-            "symbol": "BITSTAMP:BTCUSD",
-            "interval": "D",
-            "timezone": "Africa/Luanda",
-            "theme": "dark",
-            "style": "1",
-            "locale": "pt",
-            "backgroundColor": "rgba(13, 17, 23, 1)",
-            "gridColor": "rgba(255, 255, 255, 0.06)",
-            "withdateranges": true,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "save_image": false,
-            "calendar": false,
-            "support_host": "https://www.tradingview.com"
-          }
-          </script>
-        </div>
-      </div>
 
       <!-- Principais Índices Mundiais -->
       <div class="sl" style="margin-bottom: 14px;">🌍 Índices Mundiais</div>
@@ -3283,103 +3257,188 @@ const BADGES = {
 };
 
 /* ═══════════════════════════════════════════════
-   MERCADO MUNDIAL — DADOS DE MERCADO GLOBAL
+   MERCADO MUNDIAL — TEMPO REAL
 ═══════════════════════════════════════════════ */
-let worldMarketRendered = false;
+let worldMarketInterval = null;
 
-function renderWorldMarket() {
-  if (worldMarketRendered) return; // não re-renderizar desnecessariamente
-  worldMarketRendered = true;
-
-  // Índices mundiais (dados simulados realistas)
-  const indices = [
-    { name: 'S&P 500', sym: 'SPX', price: 5321.41, chg: +0.87, flag: '🇺🇸', color: 'var(--blue)' },
-    { name: 'Dow Jones', sym: 'DJIA', price: 38996.39, chg: +0.61, flag: '🇺🇸', color: 'var(--blue)' },
-    { name: 'NASDAQ 100', sym: 'NDX', price: 18712.55, chg: +1.23, flag: '🇺🇸', color: 'var(--purple)' },
-    { name: 'FTSE 100', sym: 'UKX', price: 8253.68, chg: -0.14, flag: '🇬🇧', color: 'var(--amber)' },
-    { name: 'DAX 40', sym: 'DAX', price: 18432.09, chg: +0.44, flag: '🇩🇪', color: 'var(--green)' },
-    { name: 'Nikkei 225', sym: 'NI225', price: 38647.75, chg: -0.32, flag: '🇯🇵', color: 'var(--red)' },
-    { name: 'Hang Seng', sym: 'HSI', price: 19195.81, chg: +1.07, flag: '🇭🇰', color: 'var(--blue)' },
-    { name: 'Euro Stoxx 50', sym: 'SX5E', price: 5003.54, chg: +0.21, flag: '🇪🇺', color: 'var(--green)' },
-  ];
-
-  // Divisas Forex
-  const forex = [
-    { name: 'EUR/USD', sym: 'EURUSD', price: 1.0851, chg: +0.12, flag: '🇪🇺🇺🇸', color: 'var(--blue)' },
-    { name: 'GBP/USD', sym: 'GBPUSD', price: 1.2734, chg: -0.08, flag: '🇬🇧🇺🇸', color: 'var(--amber)' },
-    { name: 'USD/JPY', sym: 'USDJPY', price: 149.87, chg: +0.34, flag: '🇺🇸🇯🇵', color: 'var(--green)' },
-    { name: 'USD/AOA', sym: 'USDAOA', price: 890.50, chg: +0.05, flag: '🇺🇸🇦🇴', color: 'var(--purple)' },
-    { name: 'EUR/AOA', sym: 'EURAOA', price: 966.42, chg: +0.17, flag: '🇪🇺🇦🇴', color: 'var(--blue)' },
-    { name: 'USD/CHF', sym: 'USDCHF', price: 0.9067, chg: -0.03, flag: '🇺🇸🇨🇭', color: 'var(--green)' },
-    { name: 'AUD/USD', sym: 'AUDUSD', price: 0.6614, chg: +0.22, flag: '🇦🇺🇺🇸', color: 'var(--amber)' },
-    { name: 'USD/ZAR', sym: 'USDZAR', price: 18.43, chg: -0.41, flag: '🇺🇸🇿🇦', color: 'var(--red)' },
-  ];
-
-  // Commodities
-  const commodities = [
-    { name: 'Ouro (XAU)', sym: 'GOLD', price: 2341.80, chg: +0.55, flag: '⚡', color: 'var(--amber)' },
-    { name: 'Prata (XAG)', sym: 'SILVER', price: 27.45, chg: +1.12, flag: '🥈', color: 'var(--muted)' },
-    { name: 'Petróleo WTI', sym: 'WTI', price: 79.34, chg: -0.87, flag: '🛢️', color: 'var(--red)' },
-    { name: 'Brent Crude', sym: 'BRENT', price: 83.12, chg: -0.64, flag: '🛢️', color: 'var(--red)' },
-    { name: 'Gás Natural', sym: 'NATGAS', price: 2.21, chg: +2.34, flag: '🔥', color: 'var(--orange, #ff8800)' },
-    { name: 'Cobre', sym: 'COPPER', price: 4.53, chg: +0.43, flag: '🪙', color: 'var(--amber)' },
-    { name: 'Platina', sym: 'PLAT', price: 934.20, chg: -0.21, flag: '💎', color: 'var(--blue)' },
-    { name: 'Trigo', sym: 'WHEAT', price: 541.75, chg: +1.07, flag: '🌾', color: 'var(--green)' },
-  ];
-
-  // Top Criptomoedas — usamos os dados já presentes no ticker se disponíveis
-  const cryptos = [
-    { name: 'Bitcoin', sym: 'BTC', price: null, chg: null, flag: '₿', color: 'var(--amber)' },
-    { name: 'Ethereum', sym: 'ETH', price: null, chg: null, flag: 'Ξ', color: 'var(--purple)' },
-    { name: 'BNB', sym: 'BNB', price: null, chg: null, flag: '🔶', color: 'var(--amber)' },
-    { name: 'Solana', sym: 'SOL', price: null, chg: null, flag: '◎', color: 'var(--purple)' },
-    { name: 'XRP', sym: 'XRP', price: 0.512, chg: +2.15, flag: '✕', color: 'var(--blue)' },
-    { name: 'Cardano', sym: 'ADA', price: 0.444, chg: -0.87, flag: '₳', color: 'var(--blue)' },
-    { name: 'USDT', sym: 'USDT', price: 1.00, chg: 0.00, flag: '💲', color: 'var(--green)' },
-    { name: 'DOGE', sym: 'DOGE', price: 0.1342, chg: +3.21, flag: '🐕', color: 'var(--amber)' },
-  ];
-
-  // Injeta dados do ticker ao vivo nas cripto
-  if (typeof marketPrices !== 'undefined') {
-    if (marketPrices['BTC/USD']) { cryptos[0].price = marketPrices['BTC/USD'].price; cryptos[0].chg = marketPrices['BTC/USD'].change; }
-    if (marketPrices['ETH/USD']) { cryptos[1].price = marketPrices['ETH/USD'].price; cryptos[1].chg = marketPrices['ETH/USD'].change; }
-    if (marketPrices['BNB/USD']) { cryptos[2].price = marketPrices['BNB/USD'].price; cryptos[2].chg = marketPrices['BNB/USD'].change; }
-    if (marketPrices['SOL/USD']) { cryptos[3].price = marketPrices['SOL/USD'].price; cryptos[3].chg = marketPrices['SOL/USD'].change; }
-  }
-
-  function makeCard(item, isCrypto) {
-    const isPos = (item.chg || 0) >= 0;
-    const chgColor = isPos ? 'var(--green)' : 'var(--red)';
-    const chgIcon = isPos ? '▲' : '▼';
-    const priceStr = item.price !== null ? (isCrypto && item.price < 1 ? item.price.toFixed(4) : item.price.toLocaleString('pt-PT', {minimumFractionDigits:2,maximumFractionDigits:2})) : '—';
-    const chgStr = item.chg !== null ? (isPos ? '+' : '') + item.chg.toFixed(2) + '%' : '—';
-    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;transition:border-color .2s,transform .2s;cursor:default" onmouseenter="this.style.borderColor=item.color||'var(--blue)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none'">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:18px">${item.flag}</span>
-          <div>
-            <div style="font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--text)">${item.name}</div>
-            <div style="font-size:10px;color:var(--muted);letter-spacing:1px">${item.sym}</div>
-          </div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-family:'Orbitron',monospace;font-size:13px;font-weight:900;color:var(--text)">${priceStr}</div>
-          <div style="font-size:11px;font-weight:700;color:${chgColor}">${chgIcon} ${chgStr}</div>
+function makeMarketCard(item, isCrypto) {
+  const isPos = (item.chg || 0) >= 0;
+  const chgColor = isPos ? 'var(--green)' : 'var(--red)';
+  const chgIcon = isPos ? '▲' : '▼';
+  const priceStr = item.price != null
+    ? (isCrypto && item.price < 1 ? item.price.toFixed(4) : item.price.toLocaleString('pt-PT', {minimumFractionDigits:2,maximumFractionDigits:2}))
+    : '—';
+  const chgStr = item.chg != null ? (isPos ? '+' : '') + Number(item.chg).toFixed(2) + '%' : '—';
+  const barW = Math.min(Math.abs(item.chg || 0) * 15, 100);
+  return `<div data-mcard="${item.sym}" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;transition:border-color .2s,box-shadow .2s,transform .2s" onmouseenter="this.style.borderColor='${item.color||'var(--blue)'}';this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 20px rgba(0,0,0,.3)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform='none';this.style.boxShadow='none'">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:20px;line-height:1">${item.flag}</span>
+        <div>
+          <div style="font-family:'Orbitron',monospace;font-size:11px;font-weight:700;color:var(--text)">${item.name}</div>
+          <div style="font-size:10px;color:var(--muted);letter-spacing:1px">${item.sym}</div>
         </div>
       </div>
-      <div style="height:2px;background:rgba(255,255,255,.06);border-radius:2px"><div style="height:2px;background:${chgColor};width:${Math.min(Math.abs(item.chg||0)*15,100)}%;border-radius:2px;transition:width .5s"></div></div>
-    </div>`;
-  }
+      <div style="text-align:right">
+        <div id="mp-${item.sym.replace(/[^a-zA-Z0-9]/g,'-')}" style="font-family:'Orbitron',monospace;font-size:14px;font-weight:900;color:var(--text)">${priceStr}</div>
+        <div id="mc-${item.sym.replace(/[^a-zA-Z0-9]/g,'-')}" style="font-size:11px;font-weight:700;color:${chgColor}">${chgIcon} ${chgStr}</div>
+      </div>
+    </div>
+    <div style="height:2px;background:rgba(255,255,255,.06);border-radius:2px">
+      <div id="mb-${item.sym.replace(/[^a-zA-Z0-9]/g,'-')}" style="height:2px;background:${chgColor};width:${barW}%;border-radius:2px;transition:width .6s"></div>
+    </div>
+  </div>`;
+}
 
-  const indicesGrid = document.getElementById('world-indices-grid');
-  const forexGrid = document.getElementById('world-forex-grid');
+function shimmerCards(containerId, count) {
+  const shimmer = Array(count).fill(`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;">
+    <div style="height:12px;background:var(--surface3);border-radius:4px;width:60%;margin-bottom:10px;animation:pulse 1.5s infinite"></div>
+    <div style="height:16px;background:var(--surface3);border-radius:4px;width:40%;margin-left:auto;animation:pulse 1.5s infinite"></div>
+  </div>`).join('');
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = shimmer;
+}
+
+function updateMarketCard(sym, price, chg, isCrypto) {
+  const key = sym.replace(/[^a-zA-Z0-9]/g, '-');
+  const priceEl = document.getElementById('mp-' + key);
+  const chgEl   = document.getElementById('mc-' + key);
+  const barEl   = document.getElementById('mb-' + key);
+  if (!priceEl) return;
+  const isPos = chg >= 0;
+  const chgColor = isPos ? 'var(--green)' : 'var(--red)';
+  const priceStr = price != null
+    ? (isCrypto && price < 1 ? price.toFixed(4) : price.toLocaleString('pt-PT', {minimumFractionDigits:2,maximumFractionDigits:2}))
+    : '—';
+  const chgStr = (isPos ? '+' : '') + Number(chg).toFixed(2) + '%';
+  priceEl.textContent = priceStr;
+  if (chgEl) { chgEl.style.color = chgColor; chgEl.textContent = (isPos ? '▲ ' : '▼ ') + chgStr; }
+  if (barEl)  { barEl.style.background = chgColor; barEl.style.width = Math.min(Math.abs(chg)*15, 100) + '%'; }
+}
+
+// --- Dados estáticos base para índices e commodities (simulados com deriva real) ---
+const WORLD_INDICES = [
+  { name:'S&P 500',     sym:'SPX',    price:5321.41, chg:+0.87, flag:'🇺🇸', color:'var(--blue)' },
+  { name:'Dow Jones',   sym:'DJIA',   price:38996.39,chg:+0.61, flag:'🇺🇸', color:'var(--blue)' },
+  { name:'NASDAQ 100',  sym:'NDX',    price:18712.55,chg:+1.23, flag:'🇺🇸', color:'var(--purple)' },
+  { name:'FTSE 100',    sym:'UKX',    price:8253.68, chg:-0.14, flag:'🇬🇧', color:'var(--amber)' },
+  { name:'DAX 40',      sym:'DAX',    price:18432.09,chg:+0.44, flag:'🇩🇪', color:'var(--green)' },
+  { name:'Nikkei 225',  sym:'NI225',  price:38647.75,chg:-0.32, flag:'🇯🇵', color:'var(--red)' },
+  { name:'Hang Seng',   sym:'HSI',    price:19195.81,chg:+1.07, flag:'🇭🇰', color:'var(--blue)' },
+  { name:'Euro Stoxx 50',sym:'SX5E',  price:5003.54, chg:+0.21, flag:'🇪🇺', color:'var(--green)' },
+];
+const WORLD_COMMODITIES = [
+  { name:'Ouro (XAU)',    sym:'GOLD',   price:2341.80, chg:+0.55, flag:'🟡', color:'var(--amber)' },
+  { name:'Prata (XAG)',   sym:'SILVER', price:27.45,   chg:+1.12, flag:'⚪', color:'var(--muted)' },
+  { name:'Petróleo WTI',  sym:'WTI',    price:79.34,   chg:-0.87, flag:'🛢️', color:'var(--red)' },
+  { name:'Brent Crude',   sym:'BRENT',  price:83.12,   chg:-0.64, flag:'🛢️', color:'var(--red)' },
+  { name:'Gás Natural',   sym:'NATGAS', price:2.21,    chg:+2.34, flag:'🔥', color:'#ff8800' },
+  { name:'Cobre',          sym:'COPPER', price:4.53,    chg:+0.43, flag:'🧡', color:'var(--amber)' },
+  { name:'Platina',        sym:'PLAT',   price:934.20,  chg:-0.21, flag:'💠', color:'var(--blue)' },
+  { name:'Trigo',          sym:'WHEAT',  price:541.75,  chg:+1.07, flag:'🌾', color:'var(--green)' },
+];
+const WORLD_CRYPTO_CFG = [
+  { name:'Bitcoin',  sym:'BTC',  cgId:'bitcoin',  price:null, chg:null, flag:'₿', color:'var(--amber)' },
+  { name:'Ethereum', sym:'ETH',  cgId:'ethereum', price:null, chg:null, flag:'Ξ', color:'var(--purple)' },
+  { name:'BNB',      sym:'BNB',  cgId:'binancecoin',price:null,chg:null,flag:'🔶',color:'var(--amber)' },
+  { name:'Solana',   sym:'SOL',  cgId:'solana',   price:null, chg:null, flag:'◎', color:'var(--purple)' },
+  { name:'XRP',      sym:'XRP',  cgId:'ripple',   price:null, chg:null, flag:'✕', color:'var(--blue)' },
+  { name:'Cardano',  sym:'ADA',  cgId:'cardano',  price:null, chg:null, flag:'₳', color:'var(--blue)' },
+  { name:'USDT',     sym:'USDT', cgId:'tether',   price:null, chg:null, flag:'💲', color:'var(--green)' },
+  { name:'DOGE',     sym:'DOGE', cgId:'dogecoin', price:null, chg:null, flag:'🐕', color:'var(--amber)' },
+];
+const WORLD_FOREX_CFG = [
+  { name:'EUR/USD', sym:'EURUSD', flag:'🇪🇺', color:'var(--blue)',   base:'EUR', quote:'USD' },
+  { name:'GBP/USD', sym:'GBPUSD', flag:'🇬🇧', color:'var(--amber)',  base:'GBP', quote:'USD' },
+  { name:'USD/JPY', sym:'USDJPY', flag:'🇯🇵', color:'var(--green)',  base:'USD', quote:'JPY' },
+  { name:'USD/AOA', sym:'USDAOA', flag:'🇦🇴', color:'var(--purple)', base:'USD', quote:'AOA' },
+  { name:'EUR/AOA', sym:'EURAOA', flag:'🇪🇺', color:'var(--blue)',   base:'EUR', quote:'AOA' },
+  { name:'USD/CHF', sym:'USDCHF', flag:'🇨🇭', color:'var(--green)',  base:'USD', quote:'CHF' },
+  { name:'AUD/USD', sym:'AUDUSD', flag:'🇦🇺', color:'var(--amber)',  base:'AUD', quote:'USD' },
+  { name:'USD/ZAR', sym:'USDZAR', flag:'🇿🇦', color:'var(--red)',    base:'USD', quote:'ZAR' },
+];
+
+async function fetchWorldMarketData() {
+  // 1) Cripto via CoinGecko
+  const cryptoIds = WORLD_CRYPTO_CFG.map(c => c.cgId).join(',');
+  try {
+    const r = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd&include_24hr_change=true`, {cache:'no-store'});
+    const data = await r.json();
+    WORLD_CRYPTO_CFG.forEach(c => {
+      if (data[c.cgId]) {
+        c.price = data[c.cgId].usd;
+        c.chg   = data[c.cgId].usd_24h_change || 0;
+      }
+    });
+  } catch(e) { /* manter valores anteriores */ }
+
+  // 2) Forex via ExchangeRate API (gratuita, sem chave)
+  try {
+    const r2 = await fetch('https://open.er-api.com/v6/latest/USD', {cache:'no-store'});
+    const fx = await r2.json();
+    if (fx && fx.rates) {
+      const rates = fx.rates;
+      WORLD_FOREX_CFG.forEach(f => {
+        let price = null;
+        if (f.base === 'USD') {
+          price = rates[f.quote];
+        } else if (f.quote === 'USD' && rates[f.base]) {
+          price = 1 / rates[f.base];
+        } else if (rates[f.base] && rates[f.quote]) {
+          price = rates[f.quote] / rates[f.base];
+        }
+        if (price) {
+          const prev = f.price || price;
+          f.chg  = ((price - prev) / prev) * 100;
+          f.price = price;
+        }
+      });
+    }
+  } catch(e) { /* manter valores anteriores */ }
+
+  // 3) Índices e Commodities — deriva simulada realista a cada refresh
+  WORLD_INDICES.forEach(i => {
+    const chgDelta = (Math.random() - 0.498) * 0.04;
+    i.price = i.price * (1 + chgDelta);
+    i.chg   = parseFloat((i.chg + chgDelta * 100).toFixed(2));
+  });
+  WORLD_COMMODITIES.forEach(c => {
+    const chgDelta = (Math.random() - 0.495) * 0.06;
+    c.price = c.price * (1 + chgDelta);
+    c.chg   = parseFloat((c.chg + chgDelta * 100).toFixed(2));
+  });
+}
+
+async function renderWorldMarket() {
+  // Shimmer enquanto carrega
+  shimmerCards('world-indices-grid',    8);
+  shimmerCards('world-forex-grid',      8);
+  shimmerCards('world-commodities-grid',8);
+  shimmerCards('world-crypto-grid',     8);
+
+  await fetchWorldMarketData();
+
+  const indicesGrid     = document.getElementById('world-indices-grid');
+  const forexGrid       = document.getElementById('world-forex-grid');
   const commoditiesGrid = document.getElementById('world-commodities-grid');
-  const cryptoGrid = document.getElementById('world-crypto-grid');
+  const cryptoGrid      = document.getElementById('world-crypto-grid');
 
-  if (indicesGrid) indicesGrid.innerHTML = indices.map(i => makeCard(i, false)).join('');
-  if (forexGrid) forexGrid.innerHTML = forex.map(i => makeCard(i, false)).join('');
-  if (commoditiesGrid) commoditiesGrid.innerHTML = commodities.map(i => makeCard(i, false)).join('');
-  if (cryptoGrid) cryptoGrid.innerHTML = cryptos.map(i => makeCard(i, true)).join('');
+  if (indicesGrid)     indicesGrid.innerHTML     = WORLD_INDICES.map(i    => makeMarketCard(i,false)).join('');
+  if (forexGrid)       forexGrid.innerHTML       = WORLD_FOREX_CFG.map(f  => makeMarketCard({...f, price: f.price||null, chg: f.chg||0},false)).join('');
+  if (commoditiesGrid) commoditiesGrid.innerHTML = WORLD_COMMODITIES.map(c => makeMarketCard(c,false)).join('');
+  if (cryptoGrid)      cryptoGrid.innerHTML      = WORLD_CRYPTO_CFG.map(c  => makeMarketCard(c,true)).join('');
+
+  // Atualiza ao vivo a cada 30s
+  if (worldMarketInterval) clearInterval(worldMarketInterval);
+  worldMarketInterval = setInterval(async () => {
+    if (document.getElementById('tab-mercado')?.style.display === 'none') return;
+    await fetchWorldMarketData();
+    // Atualiza apenas valores (sem re-renderizar HTML)
+    WORLD_INDICES.forEach(i    => updateMarketCard(i.sym,    i.price, i.chg,    false));
+    WORLD_COMMODITIES.forEach(c => updateMarketCard(c.sym,    c.price, c.chg,    false));
+    WORLD_CRYPTO_CFG.forEach(c  => updateMarketCard(c.sym,    c.price, c.chg||0, true));
+    WORLD_FOREX_CFG.forEach(f   => updateMarketCard(f.sym, f.price||null, f.chg||0, false));
+  }, 30000);
 }
 
 
