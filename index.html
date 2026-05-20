@@ -1401,27 +1401,12 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
         </div>
       </div>
 
-      <div class="q-layout-split">
-        <div class="q-layout-main">
-          <div class="sl">Escolhe o teu modo</div>
-          <div class="mode-grid" id="mode-grid" aria-label="Modos de quiz disponíveis"></div>
-        </div>
-        
-        <div class="q-layout-side">
-          <div class="ranking-preview-card">
-            <div class="ranking-preview-title">
-              <span>🏆 LÍDERES DE ANGOLA</span>
-              <a href="#" onclick="showTab('tab-ranking'); return false;" style="color:var(--blue); font-size:10px; text-decoration:none; font-family:'Orbitron',monospace;">VER TODOS</a>
-            </div>
-            <div class="ranking-preview-list" id="rank-preview-list">
-              <div class="empty-rank" style="padding:10px 0; font-size:11px;">A carregar líderes de Angola... 🇦🇴</div>
-            </div>
-          </div>
+      <div class="sl" style="text-align: center; margin-bottom: 20px;">Escolhe o teu modo</div>
+      <div class="mode-grid" id="mode-grid" aria-label="Modos de quiz disponíveis"></div>
 
-          <div class="sl" style="margin-top:20px;">Abre conta nas corretoras</div>
-          <div class="brokers-grid" id="brokers-home" style="grid-template-columns: 1fr; gap: 10px; margin-top: 0;"></div>
-        </div>
-      </div>
+      <!-- Brokers and Wallets Moved to Bottom of Quizzes -->
+      <div class="sl" style="margin-top: 60px; text-align: center;">Corretoras e Carteiras Recomendadas</div>
+      <div class="mode-grid" id="brokers-home" style="margin-bottom: 40px;"></div>
     </div>
     <!-- TAB COURSES -->
     <div id="tab-courses" style="display:none">
@@ -3163,15 +3148,18 @@ function renderModes() {
 
 function renderBrokers(id) {
   const items=[
-    {cls:'qx',logo:`<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>`,sub:'Opções Digitais · Depósito mín $10',url:'https://broker-qx.pro/sign-up/?lid=2076062'},
-    {cls:'dr',logo:`<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.83L19.5 19h-15L12 5.83z"/></svg>`,sub:'CFDs & Sintéticos · Depósito mín $5',url:'https://track.deriv.com/_V1mBADAUk6W4zHaZIQMoUGNd7ZgqdRLk/1/'},
-    {cls:'bn',logo:`<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 1.5l-5.5 5.5 1.5 1.5L12 4.5l4 4 1.5-1.5L12 1.5zM6.5 12L1 17.5l5.5 5.5 1.5-1.5L2.5 16l5.5-5.5-1.5-1.5zm11 0L12 6.5l-1.5 1.5L16 12l-5.5 5.5 1.5 1.5L17.5 12zM12 22.5l5.5-5.5-1.5-1.5L12 19.5l-4-4-1.5 1.5L12 22.5z"/></svg>`,sub:'Maior exchange cripto do mundo',url:'https://www.binance.com/register?ref=1234866263'},
-    {cls:'at',logo:`<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 2L2 22h4l2.5-5h7L18 22h4L12 2zm-1.5 10l2.5-5 2.5 5h-5z"/></svg>`,sub:'Carteira Digital · Dólar',url:'https://app.airtm.com/ivt/aureomendes'},
-    {cls:'rp',logo:`<svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21c-4.962 0-9-4.038-9-9s4.038-9 9-9 9 4.038 9 9-4.038 9-9 9zm2-14H9v10h2v-3h3c2.206 0 4-1.794 4-4s-1.794-4-4-4zm0 6h-3V9h3c1.103 0 2 .897 2 2s-.897 2-2 2z"/></svg>`,sub:'Cripto para Fiat',url:'https://url.hk/i/pt/rwkg5'}
+    {name:'Quotex', cls:'qx',logo:`<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>`,sub:'Opções Digitais · Depósito mín $10',url:'https://broker-qx.pro/sign-up/?lid=2076062'},
+    {name:'Deriv', cls:'dr',logo:`<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 2L1 21h22L12 2zm0 3.83L19.5 19h-15L12 5.83z"/></svg>`,sub:'CFDs & Sintéticos · Depósito mín $5',url:'https://track.deriv.com/_V1mBADAUk6W4zHaZIQMoUGNd7ZgqdRLk/1/'},
+    {name:'Binance', cls:'bn',logo:`<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 1.5l-5.5 5.5 1.5 1.5L12 4.5l4 4 1.5-1.5L12 1.5zM6.5 12L1 17.5l5.5 5.5 1.5-1.5L2.5 16l5.5-5.5-1.5-1.5zm11 0L12 6.5l-1.5 1.5L16 12l-5.5 5.5 1.5 1.5L17.5 12zM12 22.5l5.5-5.5-1.5-1.5L12 19.5l-4-4-1.5 1.5L12 22.5z"/></svg>`,sub:'Maior exchange cripto do mundo',url:'https://www.binance.com/register?ref=1234866263'},
+    {name:'Airtm', cls:'at',logo:`<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 2L2 22h4l2.5-5h7L18 22h4L12 2zm-1.5 10l2.5-5 2.5 5h-5z"/></svg>`,sub:'Carteira Digital · Dólar',url:'https://app.airtm.com/ivt/aureomendes'},
+    {name:'RedotPay', cls:'rp',logo:`<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 21c-4.962 0-9-4.038-9-9s4.038-9 9-9 9 4.038 9 9-4.038 9-9 9zm2-14H9v10h2v-3h3c2.206 0 4-1.794 4-4s-1.794-4-4-4zm0 6h-3V9h3c1.103 0 2 .897 2 2s-.897 2-2 2z"/></svg>`,sub:'Cripto para Fiat',url:'https://url.hk/i/pt/rwkg5'}
   ];
   document.getElementById(id).innerHTML = items.map(it=>`
     <a class="bk ${it.cls}" href="${it.url}" target="_blank" rel="noopener">
-      <div class="bk-logo ${it.cls}">${it.logo}</div>
+      <div class="bk-logo ${it.cls}" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 12px; gap: 8px;">
+        ${it.logo}
+        <span style="font-size: 14px; font-weight: 700; letter-spacing: 1px;">${it.name}</span>
+      </div>
       <div class="bk-sub">${it.sub}</div>
       <div class="bk-cta ${it.cls}">Abrir conta</div>
     </a>`).join('');
