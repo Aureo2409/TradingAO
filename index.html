@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-AO" dir="ltr">
 <head>
-<script src="https://www.google.com/recaptcha/enterprise.js?render=6Lc9DPQsAAAAAF4GUcnwHm9_SuV_IDENdTw-bxLU"></script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0"/>
 <meta name="description" content="TradingAO — Quiz interactivo sobre trading, criptomoedas, Forex, Quotex, Deriv e Binance. Aprende trading jogando. Plataforma educativa de Angola."/>
@@ -616,6 +615,7 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
 <!-- FIREBASE INTEGRATION BRIDGE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-appcheck.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, orderBy, limit, where, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
@@ -634,6 +634,15 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
 
   if (isConfigured) {
     app = initializeApp(firebaseConfig);
+    
+    // Inicializar o Firebase App Check com reCAPTCHA Enterprise
+    try {
+      const appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider('6Lc9DPQsAAAAAF4GUcnwHm9_SuV_IDENdTw-bxLU'),
+        isTokenAutoRefreshEnabled: true
+      });
+    } catch(e) { console.warn("App Check:", e); }
+    
     auth = getAuth(app);
     db = getFirestore(app);
   }
@@ -2554,24 +2563,6 @@ async function doLogin(e) {
   
   try {
     loginBtn.disabled = true;
-    loginBtn.textContent = 'A verificar...';
-    
-    // Gerar token reCAPTCHA Enterprise
-    if (window.grecaptcha && window.grecaptcha.enterprise) {
-      await new Promise((resolve) => {
-        grecaptcha.enterprise.ready(async () => {
-          try {
-            const token = await grecaptcha.enterprise.execute('6Lc9DPQsAAAAAF4GUcnwHm9_SuV_IDENdTw-bxLU', {action: 'LOGIN'});
-            // O token está gerado e a sessão validada pela Google
-            resolve(token);
-          } catch (err) {
-            console.error('reCAPTCHA error:', err);
-            resolve(null);
-          }
-        });
-      });
-    }
-    
     loginBtn.textContent = 'A entrar...';
     
     if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
