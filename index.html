@@ -627,7 +627,7 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
 <!-- FIREBASE INTEGRATION BRIDGE PRE-INIT -->
 <script>
   window.FirebaseBridge = {
-    isConfigured: true,
+    isConfigured: false,
     _authCallbacks: [],
     onAuthChanged: function(callback) {
       this._authCallbacks.push(callback);
@@ -644,7 +644,7 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
 <!-- FIREBASE INTEGRATION BRIDGE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-appcheck.js";
+  import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app-check.js";
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, collection, addDoc, getDocs, query, orderBy, limit, where, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
