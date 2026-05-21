@@ -1662,6 +1662,18 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
       </div>
     </div>
 
+    <!-- TAB RANKING -->
+    <div id="tab-ranking" style="display:none">
+      <div class="sl" style="margin-top:8px">Ranking global</div>
+      <div class="rank-filter" id="rank-filter"></div>
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden">
+        <div class="rank-header">
+          <div>#</div><div>Jogador</div><div>Modo</div><div>Pts</div>
+        </div>
+        <div id="rank-list"></div>
+      </div>
+    </div>
+
       <!-- TAB MERCADO MUNDIAL -->
     <div id="tab-mercado" style="display:none">
       <style>
@@ -2924,7 +2936,8 @@ if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
     if (document.getElementById('site-drawer').classList.contains('open')) {
       updateDrawerUser();
     }
-    if (document.getElementById('tab-ranking').style.display !== 'none') {
+    const tabRanking = document.getElementById('tab-ranking');
+    if (tabRanking && tabRanking.style.display !== 'none') {
       renderRanking();
     }
   });
