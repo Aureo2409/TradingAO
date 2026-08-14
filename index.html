@@ -960,6 +960,46 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
       await deleteDoc(doc(db, "questions", questionId));
     },
 
+    getInstructors: async () => {
+      if (!isConfigured) return [];
+      const snapshot = await getDocs(collection(db, "instructors"));
+      const instructors = [];
+      snapshot.forEach(doc => instructors.push({ id: doc.id, ...doc.data() }));
+      return instructors;
+    },
+
+    saveInstructor: async (instructor) => {
+      if (!isConfigured) return;
+      const id = instructor.uid || instructor.id;
+      if (!id) throw new Error('Instructor ID obrigatório.');
+      await setDoc(doc(db, "instructors", id), instructor);
+    },
+
+    deleteInstructor: async (instructorId) => {
+      if (!isConfigured) return;
+      await deleteDoc(doc(db, "instructors", instructorId));
+    },
+
+    getLiveRooms: async () => {
+      if (!isConfigured) return [];
+      const snapshot = await getDocs(collection(db, "live_rooms"));
+      const rooms = [];
+      snapshot.forEach(doc => rooms.push({ id: doc.id, ...doc.data() }));
+      return rooms;
+    },
+
+    saveLiveRoom: async (room) => {
+      if (!isConfigured) return;
+      const id = room.roomId || room.id;
+      if (!id) throw new Error('Room ID obrigatório.');
+      await setDoc(doc(db, "live_rooms", id), room);
+    },
+
+    deleteLiveRoom: async (roomId) => {
+      if (!isConfigured) return;
+      await deleteDoc(doc(db, "live_rooms", roomId));
+    },
+
     elevateUser: async (uid, currentData) => {
       if (!isConfigured) return;
       const userRef = doc(db, "users", uid);
@@ -1819,6 +1859,8 @@ body{background:#06080f;color:#e8eaf6;font-family:'DM Sans',sans-serif;margin:0}
         <button class="vf-btn" onclick="switchAdminSubtab('lessons', this)">AULAS</button>
         <button class="vf-btn" onclick="switchAdminSubtab('quizzes', this)">QUIZZES</button>
         <button class="vf-btn" onclick="switchAdminSubtab('questions', this)">PERGUNTAS</button>
+        <button class="vf-btn" onclick="switchAdminSubtab('instructors', this)">INSTRUTORES</button>
+        <button class="vf-btn" onclick="switchAdminSubtab('live_rooms', this)">SALAS AO VIVO</button>
         <button class="vf-btn" onclick="switchAdminSubtab('news', this)">NOTÍCIAS</button>
       </div>
 
@@ -2891,6 +2933,72 @@ const Store = {
     } else {
       const list = Store.get('questions') || [];
       Store.set('questions', list.filter(x => x.id !== id));
+    }
+  },
+
+  // Instructors
+  instructors: async () => {
+    if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
+      try {
+        return await window.FirebaseBridge.getInstructors();
+      } catch (e) {
+        console.error("Erro ao buscar instrutores do Firebase:", e);
+      }
+    }
+    return Store.get('instructors') || [];
+  },
+  saveInstructor: async (inst) => {
+    if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
+      await window.FirebaseBridge.saveInstructor(inst);
+    } else {
+      const list = Store.get('instructors') || [];
+      const id = inst.uid || inst.id;
+      if (!id) throw new Error('Instructor ID obrigatório.');
+      const idx = list.findIndex(x => x.uid === id || x.id === id);
+      if (idx !== -1) list[idx] = { ...list[idx], ...inst };
+      else list.push({ ...inst, uid: id, id });
+      Store.set('instructors', list);
+    }
+  },
+  deleteInstructor: async (id) => {
+    if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
+      await window.FirebaseBridge.deleteInstructor(id);
+    } else {
+      const list = Store.get('instructors') || [];
+      Store.set('instructors', list.filter(x => x.uid !== id && x.id !== id));
+    }
+  },
+
+  // Live Rooms
+  live_rooms: async () => {
+    if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
+      try {
+        return await window.FirebaseBridge.getLiveRooms();
+      } catch (e) {
+        console.error("Erro ao buscar live rooms do Firebase:", e);
+      }
+    }
+    return Store.get('live_rooms') || [];
+  },
+  saveLiveRoom: async (room) => {
+    if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
+      await window.FirebaseBridge.saveLiveRoom(room);
+    } else {
+      const list = Store.get('live_rooms') || [];
+      const id = room.roomId || room.id;
+      if (!id) throw new Error('Room ID obrigatório.');
+      const idx = list.findIndex(x => x.roomId === id || x.id === id);
+      if (idx !== -1) list[idx] = { ...list[idx], ...room };
+      else list.push({ ...room, roomId: id, id });
+      Store.set('live_rooms', list);
+    }
+  },
+  deleteLiveRoom: async (id) => {
+    if (window.FirebaseBridge && window.FirebaseBridge.isConfigured) {
+      await window.FirebaseBridge.deleteLiveRoom(id);
+    } else {
+      const list = Store.get('live_rooms') || [];
+      Store.set('live_rooms', list.filter(x => x.roomId !== id && x.id !== id));
     }
   },
 
@@ -5261,6 +5369,8 @@ function switchAdminSubtab(tab, btn) {
     'lessons': 'Gestão de Aulas',
     'quizzes': 'Gestão de Quizzes',
     'questions': 'Gestão de Perguntas',
+    'instructors': 'Gestão de Instrutores',
+    'live_rooms': 'Gestão de Salas Ao Vivo',
     'news': 'Gestão de Notícias'
   };
   const titleEl = document.getElementById('admin-table-title');
@@ -5482,6 +5592,97 @@ async function renderAdminTab() {
       }
     }
     
+    // Sub-aba Instrutores
+    else if (currentAdminSubtab === 'instructors') {
+      const list = await Store.instructors();
+      if (list.length === 0) {
+        html = '<div style="padding:40px; text-align:center; color:var(--muted); font-size:12px;">Nenhum instrutor cadastrado ainda.</div>';
+      } else {
+        html = `
+          <table class="admin-table" style="width:100%; border-collapse:collapse; text-align:left; font-size:12px; min-width:750px;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border2); color:var(--muted2); font-family:'Orbitron',monospace; font-size:10px;">
+                <th style="padding:14px 16px;">INSTRUTOR</th>
+                <th style="padding:14px 16px;">FUNÇÃO</th>
+                <th style="padding:14px 16px;">STATUS</th>
+                <th style="padding:14px 16px;">WEBSITE</th>
+                <th style="padding:14px 16px; text-align:right;">AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(inst => `
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.02); transition: background .15s;" onmouseover="this.style.background='rgba(255,255,255,0.01)'" onmouseout="this.style.background='transparent'">
+                  <td style="padding:12px 16px;">
+                    <div style="font-weight:bold; color:#fff; font-size:13px;">${inst.name || inst.id}</div>
+                    <div style="font-size:10px; color:var(--muted2); margin-top:2px;">ID: ${inst.id}</div>
+                  </td>
+                  <td style="padding:12px 16px;">${inst.role || '---'}</td>
+                  <td style="padding:12px 16px;">
+                    <span style="padding: 2px 8px; border-radius: 999px; font-size:10px; font-weight:700; background:${inst.verificationStatus === 'RETAIL_VERIFIED' ? 'rgba(0, 255, 136, 0.08)' : inst.verificationStatus === 'ADMIN_APPROVED' ? 'rgba(0, 112, 255, 0.08)' : 'rgba(255,255,255,0.03)'}; color:${inst.verificationStatus === 'RETAIL_VERIFIED' ? 'var(--green)' : inst.verificationStatus === 'ADMIN_APPROVED' ? 'var(--blue)' : 'var(--muted2)'}; border:1px solid ${inst.verificationStatus === 'RETAIL_VERIFIED' ? 'rgba(0, 255, 136, 0.15)' : inst.verificationStatus === 'ADMIN_APPROVED' ? 'rgba(0, 112, 255, 0.15)' : 'var(--border)'};">
+                      ${inst.verificationStatus || 'Pendente'}
+                    </span>
+                  </td>
+                  <td style="padding:12px 16px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:220px;">${inst.website ? `<a href=\"${inst.website}\" target=\"_blank\" rel=\"noreferrer\" style=\"color:var(--cyan); text-decoration:none;\">${inst.website}</a>` : '---'}</td>
+                  <td style="padding:12px 16px; text-align:right; white-space:nowrap;">
+                    <button class="btn" style="padding:4px 8px; font-size:10px; background:rgba(0, 212, 255, 0.05); color:var(--blue); border:1px solid rgba(0, 212, 255, 0.15); margin-right:6px;" onclick="openAdminFormModal('${inst.id}')">Editar ✏️</button>
+                    <button class="btn" style="padding:4px 8px; font-size:10px; background:rgba(255, 51, 85, 0.05); color:var(--red); border:1px solid rgba(255, 51, 85, 0.15);" onclick="deleteAdminItem('${inst.id}')">Apagar 🗑️</button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+    }
+    
+    // Sub-aba Salas Ao Vivo
+    else if (currentAdminSubtab === 'live_rooms') {
+      const list = await Store.live_rooms();
+      const instructorsList = await Store.instructors();
+      if (list.length === 0) {
+        html = '<div style="padding:40px; text-align:center; color:var(--muted); font-size:12px;">Nenhuma sala ao vivo cadastrada ainda.</div>';
+      } else {
+        html = `
+          <table class="admin-table" style="width:100%; border-collapse:collapse; text-align:left; font-size:12px; min-width:850px;">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border2); color:var(--muted2); font-family:'Orbitron',monospace; font-size:10px;">
+                <th style="padding:14px 16px;">SALA</th>
+                <th style="padding:14px 16px;">INSTRUTOR</th>
+                <th style="padding:14px 16px;">HORÁRIO</th>
+                <th style="padding:14px 16px;">STATUS</th>
+                <th style="padding:14px 16px; text-align:right;">AÇÕES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${list.map(room => {
+                const instructor = instructorsList.find(i => i.id === room.instructorId || i.uid === room.instructorId);
+                const instructorName = instructor ? instructor.name : (room.instructorId || '---');
+                const starts = room.startTime ? room.startTime.replace('T', ' ').substring(0, 16) : '---';
+                const ends = room.endTime ? room.endTime.replace('T', ' ').substring(0, 16) : '---';
+                return `
+                  <tr style="border-bottom:1px solid rgba(255,255,255,0.02); transition: background .15s;" onmouseover="this.style.background='rgba(255,255,255,0.01)'" onmouseout="this.style.background='transparent'">
+                    <td style="padding:12px 16px;">
+                      <div style="font-weight:bold; color:#fff; font-size:13px;">${room.title}</div>
+                      <div style="font-size:10px; color:var(--muted2); margin-top:2px;">ID: ${room.roomId || room.id}</div>
+                    </td>
+                    <td style="padding:12px 16px; color:var(--muted2);">${instructorName}</td>
+                    <td style="padding:12px 16px; font-family:'Orbitron',monospace;">${starts} → ${ends}</td>
+                    <td style="padding:12px 16px;">
+                      <span style="padding:2px 8px; border-radius:999px; font-size:10px; font-weight:700; background:${room.isLive ? 'rgba(0,255,136,0.08)' : 'rgba(255,255,255,0.03)'}; color:${room.isLive ? 'var(--green)' : 'var(--muted2)'}; border:1px solid ${room.isLive ? 'rgba(0,255,136,0.15)' : 'var(--border)'};">${room.isLive ? 'Ao Vivo' : 'Agendada'}</span>
+                    </td>
+                    <td style="padding:12px 16px; text-align:right; white-space:nowrap;">
+                      <button class="btn" style="padding:4px 8px; font-size:10px; background:rgba(0, 212, 255, 0.05); color:var(--blue); border:1px solid rgba(0, 212, 255, 0.15); margin-right:6px;" onclick="openAdminFormModal('${room.roomId || room.id}')">Editar ✏️</button>
+                      <button class="btn" style="padding:4px 8px; font-size:10px; background:rgba(255, 51, 85, 0.05); color:var(--red); border:1px solid rgba(255, 51, 85, 0.15);" onclick="deleteAdminItem('${room.roomId || room.id}')">Apagar 🗑️</button>
+                    </td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+      }
+    }
+    
     // Sub-aba Notícias
     else if (currentAdminSubtab === 'news') {
       const list = await Store.news();
@@ -5549,6 +5750,7 @@ async function openAdminFormModal(itemId = null) {
     let item = null;
     const coursesList = await Store.courses();
     const quizzesList = await Store.quizzes();
+    const instructorsList = await Store.instructors();
     
     if (itemId) {
       if (currentAdminSubtab === 'courses') {
@@ -5561,6 +5763,12 @@ async function openAdminFormModal(itemId = null) {
       } else if (currentAdminSubtab === 'questions') {
         const list = await Store.questions();
         item = list.find(x => x.id === itemId);
+      } else if (currentAdminSubtab === 'instructors') {
+        const list = await Store.instructors();
+        item = list.find(x => x.id === itemId || x.uid === itemId);
+      } else if (currentAdminSubtab === 'live_rooms') {
+        const list = await Store.live_rooms();
+        item = list.find(x => x.roomId === itemId || x.id === itemId);
       } else if (currentAdminSubtab === 'news') {
         const list = await Store.news();
         item = list.find(x => x.id === itemId);
@@ -5787,6 +5995,87 @@ async function openAdminFormModal(itemId = null) {
         `;
       }
     }
+
+    else if (currentAdminSubtab === 'instructors') {
+      html = `
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">ID DO INSTRUTOR (UID ou slug)</label>
+          <input type="text" id="form-instructor-id" placeholder="ex: rodolfo-silva" required style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" ${itemId ? 'readonly style="background:rgba(255,255,255,0.01); color:var(--muted2); pointer-events:none;"' : ''} value="${item ? item.id : ''}">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">NOME DO INSTRUTOR</label>
+          <input type="text" id="form-instructor-name" required style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item ? item.name : ''}">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">FUNÇÃO / TÍTULO</label>
+          <input type="text" id="form-instructor-role" placeholder="ex: Trader Senior" style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item ? item.role || '' : ''}">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">BIO CURTA</label>
+          <textarea id="form-instructor-bio" rows="3" style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px; resize:vertical; line-height:1.4;">${item ? item.bio || '' : ''}</textarea>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">URL DA IMAGEM</label>
+            <input type="url" id="form-instructor-photo" placeholder="https://..." style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item ? item.photoUrl || '' : ''}">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">SITE / LINK</label>
+            <input type="url" id="form-instructor-website" placeholder="https://..." style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item ? item.website || '' : ''}">
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">STATUS DE VERIFICAÇÃO</label>
+          <select id="form-instructor-status" style="background:#06080f; border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px; outline:none;">
+            <option value="RETAIL_UNVERIFIED" ${item && item.verificationStatus === 'RETAIL_UNVERIFIED' ? 'selected' : ''}>Pendente</option>
+            <option value="RETAIL_VERIFIED" ${item && item.verificationStatus === 'RETAIL_VERIFIED' ? 'selected' : ''}>Verificado</option>
+            <option value="ADMIN_APPROVED" ${item && item.verificationStatus === 'ADMIN_APPROVED' ? 'selected' : ''}>Aprovado pelo Admin</option>
+          </select>
+        </div>
+      `;
+    }
+
+    else if (currentAdminSubtab === 'live_rooms') {
+      html = `
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">ID DA SALA AO VIVO</label>
+          <input type="text" id="form-room-id" placeholder="ex: forex-ao-vivo-1" required style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" ${itemId ? 'readonly style="background:rgba(255,255,255,0.01); color:var(--muted2); pointer-events:none;"' : ''} value="${item ? item.roomId : ''}">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">TÍTULO DA SALA</label>
+          <input type="text" id="form-room-title" required style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item ? item.title : ''}">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">INSTRUTOR</label>
+          <select id="form-room-instructor" style="background:#06080f; border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px; outline:none;">
+            <option value="">Nenhum instrutor selecionado</option>
+            ${instructorsList.map(inst => `<option value="${inst.id}" ${item && item.instructorId === inst.id ? 'selected' : ''}>${inst.name || inst.id}</option>`).join('')}
+          </select>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">INÍCIO (data e hora)</label>
+            <input type="datetime-local" id="form-room-start" required style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item && item.startTime ? item.startTime.substring(0, 16) : ''}">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:4px;">
+            <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">FIM (data e hora)</label>
+            <input type="datetime-local" id="form-room-end" required style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item && item.endTime ? item.endTime.substring(0, 16) : ''}">
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">LINK DA TRANSMISSÃO</label>
+          <input type="url" id="form-room-url" placeholder="https://..." required style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px;" value="${item ? item.url || '' : ''}">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:4px;">
+          <label style="font-size:9px; font-family:'Orbitron',monospace; color:var(--muted2); font-weight:700;">DESCRIÇÃO CURTA</label>
+          <textarea id="form-room-description" rows="3" style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:var(--rs); padding:10px; color:#fff; font-size:12px; resize:vertical; line-height:1.4;">${item ? item.description || '' : ''}</textarea>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; margin-top:8px; background:rgba(255,255,255,0.01); padding:12px; border-radius:var(--rs); border:1px dashed var(--border);">
+          <input type="checkbox" id="form-room-live" ${item && item.isLive ? 'checked' : ''} style="width:18px; height:18px; cursor:pointer;">
+          <label for="form-room-live" style="font-size:12px; color:#fff; font-weight:600; cursor:pointer; user-select:none;">Sala marcada como ao vivo agora</label>
+        </div>
+      `;
+    }
     
     // FORM NOTÍCIAS
     else if (currentAdminSubtab === 'news') {
@@ -5992,6 +6281,76 @@ async function saveAdminForm(event) {
       
       await Store.saveQuestion(doc);
     }
+
+    else if (currentAdminSubtab === 'instructors') {
+      const id = document.getElementById('form-instructor-id').value.trim();
+      const name = document.getElementById('form-instructor-name').value.trim();
+      const role = document.getElementById('form-instructor-role').value.trim();
+      const bio = document.getElementById('form-instructor-bio').value.trim();
+      const photoUrl = document.getElementById('form-instructor-photo').value.trim();
+      const website = document.getElementById('form-instructor-website').value.trim();
+      const verificationStatus = document.getElementById('form-instructor-status').value;
+      
+      if (!id || !name) {
+        throw new Error('Preenche o ID e o nome do instrutor.');
+      }
+      
+      const doc = {
+        id,
+        uid: id,
+        name,
+        role,
+        bio,
+        photoUrl,
+        website,
+        verificationStatus,
+        createdAt: currentEditingId ? undefined : new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      if (currentEditingId) {
+        const existing = (await Store.instructors()).find(x => x.id === currentEditingId || x.uid === currentEditingId);
+        if (existing) doc.createdAt = existing.createdAt || new Date().toISOString();
+      }
+      
+      await Store.saveInstructor(doc);
+    }
+
+    else if (currentAdminSubtab === 'live_rooms') {
+      const roomId = document.getElementById('form-room-id').value.trim();
+      const title = document.getElementById('form-room-title').value.trim();
+      const instructorId = document.getElementById('form-room-instructor').value;
+      const startTime = document.getElementById('form-room-start').value;
+      const endTime = document.getElementById('form-room-end').value;
+      const url = document.getElementById('form-room-url').value.trim();
+      const description = document.getElementById('form-room-description').value.trim();
+      const isLive = document.getElementById('form-room-live').checked;
+      
+      if (!roomId || !title || !startTime || !endTime || !url) {
+        throw new Error('Preenche todos os campos obrigatórios da sala ao vivo.');
+      }
+      
+      const doc = {
+        roomId,
+        id: roomId,
+        title,
+        instructorId: instructorId || null,
+        startTime,
+        endTime,
+        url,
+        description,
+        isLive,
+        createdAt: currentEditingId ? undefined : new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      if (currentEditingId) {
+        const existing = (await Store.live_rooms()).find(x => x.roomId === currentEditingId || x.id === currentEditingId);
+        if (existing) doc.createdAt = existing.createdAt || new Date().toISOString();
+      }
+      
+      await Store.saveLiveRoom(doc);
+    }
     
     // GUARDAR NOTÍCIA
     else if (currentAdminSubtab === 'news') {
@@ -6092,6 +6451,16 @@ async function deleteAdminItem(itemId) {
     // APAGAR PERGUNTA
     else if (currentAdminSubtab === 'questions') {
       await Store.deleteQuestion(itemId);
+    }
+
+    // APAGAR INSTRUTOR
+    else if (currentAdminSubtab === 'instructors') {
+      await Store.deleteInstructor(itemId);
+    }
+
+    // APAGAR SALA AO VIVO
+    else if (currentAdminSubtab === 'live_rooms') {
+      await Store.deleteLiveRoom(itemId);
     }
     
     // APAGAR NOTÍCIA
@@ -6386,6 +6755,70 @@ async function adminSeedDatabase() {
     // Seed Questions
     for (const q of QUESTIONS) {
       await Store.saveQuestion(q);
+    }
+
+    const INSTRUCTORS = [
+      {
+        id: 'rodolfo-silva',
+        uid: 'rodolfo-silva',
+        name: 'Rodolfo Silva',
+        role: 'Trader Senior',
+        bio: 'Especialista em Forex e análise técnica com foco em padrões de preço e gestão de risco.',
+        photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80',
+        website: 'https://tradingao.example.com/rodolfo',
+        verificationStatus: 'RETAIL_VERIFIED',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'maria-costa',
+        uid: 'maria-costa',
+        name: 'Maria Costa',
+        role: 'Mentora de Cripto',
+        bio: 'Instrutora de criptomoedas com experiência em Binance, staking e estratégias de investimento.',
+        photoUrl: 'https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80',
+        website: 'https://tradingao.example.com/maria',
+        verificationStatus: 'RETAIL_VERIFIED',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ];
+
+    const LIVE_ROOMS = [
+      {
+        roomId: 'forex-ao-vivo-1',
+        id: 'forex-ao-vivo-1',
+        title: 'Análise Forex ao Vivo',
+        instructorId: 'rodolfo-silva',
+        startTime: new Date(Date.now() + 3600000).toISOString(),
+        endTime: new Date(Date.now() + 7200000).toISOString(),
+        url: 'https://example.com/live/forex-1',
+        description: 'Sessão ao vivo de análise de pares de moedas e perguntas em tempo real.',
+        isLive: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        roomId: 'cripto-ao-vivo-1',
+        id: 'cripto-ao-vivo-1',
+        title: 'Hands-on Cripto: Bitcoin & Altcoins',
+        instructorId: 'maria-costa',
+        startTime: new Date(Date.now() + 10800000).toISOString(),
+        endTime: new Date(Date.now() + 14400000).toISOString(),
+        url: 'https://example.com/live/cripto-1',
+        description: 'Transmissão ao vivo com demonstração prática de trades de cripto e gestão de portfólio.',
+        isLive: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ];
+
+    for (const inst of INSTRUCTORS) {
+      await Store.saveInstructor(inst);
+    }
+
+    for (const room of LIVE_ROOMS) {
+      await Store.saveLiveRoom(room);
     }
 
     // Seed News

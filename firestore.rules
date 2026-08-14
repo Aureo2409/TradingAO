@@ -70,6 +70,26 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Coleção: instructors (traders criadores e instituições)
+    match /instructors/{instructorId} {
+      allow read: if true;
+      allow create: if isOwner(instructorId) && request.resource.data.uid == request.auth.uid;
+      allow update: if isOwner(instructorId) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Coleção: live_rooms (salas ao vivo e transmissões)
+    match /live_rooms/{roomId} {
+      allow read: if true;
+      allow create: if isAuthenticated() && (
+        isAdmin() ||
+        (exists(/databases/$(database)/documents/instructors/$(request.auth.uid)) &&
+          get(/databases/$(database)/documents/instructors/$(request.auth.uid)).data.verificationStatus == 'RETAIL_VERIFIED')
+      );
+      allow update: if isAdmin() || (resource.data.instructorId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
     // Coleção: userProgress (progresso individual de estudos)
     match /userProgress/{progressId} {
       allow read: if isAuthenticated() && (resource == null || resource.data.uid == request.auth.uid || isAdmin());
