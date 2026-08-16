@@ -6,4 +6,17 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  build: {
+    target: 'esnext',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          firebase: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
+        },
+      },
+    },
+  },
+  optimizeDeps: {
+    include: ['firebase/app', 'firebase/firestore', 'firebase/auth'],
+  },
 });
